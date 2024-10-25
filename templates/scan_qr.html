@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Scan QR Code{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Scan the QR Code</h2>
+    <video id="preview" class="img-fluid" style="width: 100%; height: auto;"></video>
+</div>
+
+<script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+<script>
+let video = document.getElementById('preview');
+
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+.then(function(stream) {
+    video.srcObject = stream;
+    video.setAttribute("playsinline", true); // Required to tell iOS safari we don't want fullscreen
+    video.play();
+    requestAnimationFrame(tick);
+});
+
+function tick() {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        var canvasElement = document.createElement('canvas');
+        var canvas = canvasElement.getContext('2d');
+        canvasElement.width = video.videoWidth;
+        canvasElement.height = video.videoHeight;
+        canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+        var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+        var code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code) {
+            // Stop video stream
+            video.srcObject.getTracks().forEach(track => track.stop());
+            // Send QR code data to server
+            sendQRCodeData(code.data);
+            return;
+        }
+    }
+    requestAnimationFrame(tick);
+}
+
+function sendQRCodeData(qrData) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "{{ url_for('submit_qr') }}", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            alert("Attendance marked successfully!");
+            window.location.href = "{{ url_for('dashboard') }}";
+        } else {
+            alert("Attendance failed: " + xhr.responseText);
+            window.location.href = "{{ url_for('dashboard') }}";
+        }
+    };
+    xhr.send(JSON.stringify({
+        qr_data: qrData
+    }));
+}
+</script>
+{% endblock %}

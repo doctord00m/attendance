@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    <script>
+    async function getDeviceFingerprint() {
+        const fingerprint = {
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            platform: navigator.platform,
+            // Add more attributes as needed
+        };
+        
+        // Send the fingerprint to the server
+        const response = await fetch('/save_fingerprint', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(fingerprint)
+        });
+        
+        const result = await response.json();
+        if (response.ok) {
+            alert(`Device fingerprint: ${result.fingerprint_id}`);
+        } else {
+            alert(`Error: ${result.message}`);
+        }
+    }
+    
+    window.onload = getDeviceFingerprint;
+    </script>
+    
+<div class="container mt-5">
+    <h2 class="text-center">Login</h2>
+    <form method="post" action="{{ url_for('login') }}">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" class="form-control" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+    </form>
+</div>
+{% endblock %}

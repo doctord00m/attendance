@@ -1,0 +1,13 @@
+/* styles.css */
+body {
+    padding: 15px;
+}
+
+.btn {
+    width: 100%; /* Make buttons full-width on mobile */
+    margin-bottom: 10px; /* Space between buttons */
+}
+
+.table-responsive {
+    margin-top: 20px; /* Space above the table */
+}

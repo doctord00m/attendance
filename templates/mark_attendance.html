@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Mark Attendance{% endblock %}
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2>Mark Attendance</h2>
+    <button class="btn btn-primary" onclick="getLocation()">Mark Attendance</button>
+</div>
+
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendPosition, showError);
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+function sendPosition(position) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "{{ url_for('submit_location') }}", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            // Redirect to QR code scanning page
+            window.location.href = "{{ url_for('scan_qr') }}";
+        } else {
+            alert("Geolocation verification failed: " + xhr.responseText);
+        }
+    };
+    xhr.send(JSON.stringify({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+    }));
+}
+
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            alert("User denied the request for Geolocation.");
+            break;
+        default:
+            alert("An unknown error occurred.");
+            break;
+    }
+}
+</script>
+{% endblock %}

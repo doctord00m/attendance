@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Professor Dashboard{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Attendance for the Day - {{ current_date }}</h1>
+
+    <!-- Mark Attendance Button -->
+    <div class="text-center my-4">
+        <a href="{{ url_for('generate_qr') }}" class="btn btn-primary btn-lg">Mark Attendance</a>
+    </div>
+
+    <!-- Table of students who marked attendance -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Student Name</th>
+                    <th scope="col">Student ID</th>
+                    <th scope="col">Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in attendance %}
+                <tr>
+                    <td>{{ student['name'] }}</td>
+                    <td>{{ student['id'] }}</td>
+                    <td>{{ student['location'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}
