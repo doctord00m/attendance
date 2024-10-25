@@ -3,6 +3,9 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center">Attendance for the Day - {{ current_date }}</h1>
+    <div class="text-center my-4">
+        <a href="{{ url_for('monitor') }}" class="btn btn-warning btn-lg">Monitor Connected Devices</a>
+    </div>
 
     <!-- Mark Attendance Button -->
     <div class="text-center my-4">
@@ -10,22 +13,23 @@
     </div>
 
     <!-- Table of students who marked attendance -->
-    <div class="table-responsive">
+    <div class="container mt-5">
+        <h2 class="text-center">Attendance Log</h2>
         <table class="table table-bordered table-hover text-center">
             <thead class="table-dark">
                 <tr>
-                    <th scope="col">Student Name</th>
                     <th scope="col">Student ID</th>
-                    <th scope="col">Location</th>
+                    <th scope="col">Student Name</th>
+                    <th scope="col">Timestamp</th>
                 </tr>
             </thead>
             <tbody>
-                {% for student in attendance %}
-                <tr>
-                    <td>{{ student['name'] }}</td>
-                    <td>{{ student['id'] }}</td>
-                    <td>{{ student['location'] }}</td>
-                </tr>
+                {% for entry in attendance_log %}
+                    <tr>
+                        <td>{{ entry.id }}</td>
+                        <td>{{ entry.name }}</td>
+                        <td>{{ entry.timestamp }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Monitor Connected Devices{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center my-4">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-warning btn-lg">Back to dashboard</a>
+    </div>
+    <h1 class="text-center">Connected Students</h1>
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Student ID</th>
+                <th scope="col">Student Name</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody id="connected-students">
+            <!-- Dynamic content will be populated here -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+function fetchConnectedStudents() {
+    fetch('/get_connected_students')
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.getElementById('connected-students');
+        tableBody.innerHTML = '';  // Clear the table body before repopulating
+
+        data.forEach(student => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td><span class="text-success">connected</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error("Error fetching connected students:", error));
+}
+
+// Fetch connected students every 10 seconds
+setInterval(fetchConnectedStudents, 10000);
+fetchConnectedStudents();  // Initial fetch on page load
+</script>
+{% endblock %}

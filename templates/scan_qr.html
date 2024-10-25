@@ -44,6 +44,8 @@ function sendQRCodeData(qrData) {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function () {
         if (xhr.status === 200) {
+            // Establish a WebSocket connection to mark the student as connected
+            socket.emit('connect'); // Trigger connection event
             alert("Attendance marked successfully!");
             window.location.href = "{{ url_for('dashboard') }}";
         } else {
